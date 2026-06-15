@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nextop</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --blue:#004aad; --blue-dk:#003080; --blue-lt:#eaf0fd;
+  --teal:#09bdac; --teal-dk:#078a7e; --teal-lt:#e4f7f5;
+  --text:#1a2332; --sub:#4a5568; --muted:#718096;
+  --border:#dde3ee; --bg:#f2f5fa; --white:#ffffff;
+}
+html,body{height:100%;background:var(--white);color:var(--text);font-family:'Consolas',monospace;overflow:hidden;}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size:48px 48px;
+  opacity:.45;
+}
+
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.blob-1{width:560px;height:560px;background:var(--blue-lt);top:-160px;right:-140px;filter:blur(80px);opacity:.8;}
+.blob-2{width:400px;height:400px;background:var(--teal-lt);bottom:-120px;left:-100px;filter:blur(70px);opacity:.9;}
+
+.loader{position:fixed;inset:0;background:var(--white);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .6s,visibility .6s;}
+.loader.gone{opacity:0;visibility:hidden;pointer-events:none;}
+.loader-logo{display:flex;align-items:center;gap:12px;font-size:1.5rem;letter-spacing:.28em;color:var(--blue);}
+.loader-logo span{color:var(--teal);}
+.loader-logo img{width:256px;height:90px;border-radius:10px;}
+.loader-bar{width:120px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.loader-bar::after{content:'';display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));animation:barAnim 1.3s ease-in-out infinite alternate;}
+@keyframes barAnim{from{width:0}to{width:100%}}
+
+.page{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;background:rgba(255,255,255,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:.88rem;letter-spacing:.25em;color:var(--blue);text-decoration:none;}
+.nav-logo span{color:var(--teal);}
+.nav-logo img{width:128px;height:45px;border-radius:6px;}
+.nav-right{display:flex;gap:14px;align-items:center;}
+.nav-link{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:7px 14px;border:1.5px solid var(--border);border-radius:5px;transition:all .2s;}
+.nav-link:hover{border-color:var(--blue);color:var(--blue);}
+
+.hero{text-align:center;animation:fadeUp .8s ease both .1s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.logo-mark{display:inline-flex;align-items:center;gap:14px;margin-bottom:28px;}
+.logo-mark img{width:256px;height:90px;border-radius:14px;}
+.logo-text{font-size:2.8rem;letter-spacing:.32em;color:var(--blue);line-height:1;}
+.logo-text span{color:var(--teal);}
+
+.tagline-pill{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--border);border-radius:20px;padding:5px 16px;margin-bottom:24px;}
+.pill-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pipPulse 1.4s ease-in-out infinite;}
+@keyframes pipPulse{0%,100%{opacity:.4}50%{opacity:1}}
+.pill-text{font-size:.57rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+
+.hero-heading{font-size:1.8rem;color:var(--text);letter-spacing:.04em;line-height:1.35;margin-bottom:12px;font-weight:400;}
+.hero-heading strong{color:var(--blue);}
+
+.hero-sub{font-size:.72rem;color:var(--muted);line-height:1.9;max-width:420px;margin:0 auto 36px;}
+.hero-sub b{color:var(--teal);}
+
+.chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;animation:fadeUp .8s ease both .25s;}
+.chip{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;color:var(--muted);background:var(--white);}
+.chip.teal{border-color:var(--teal);color:var(--teal-dk);background:var(--teal-lt);}
+.chip.blue{border-color:var(--blue);color:var(--blue);background:var(--blue-lt);}
+
+.btn-group{display:flex;gap:12px;justify-content:center;animation:fadeUp .8s ease both .35s;}
+.cta-btn{display:inline-block;padding:13px 36px;border-radius:7px;font-family:'Consolas',monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .25s;border:none;}
+.cta-primary{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(0,74,173,.28);}
+.cta-primary:hover{background:var(--blue-dk);box-shadow:0 6px 20px rgba(0,74,173,.38);transform:translateY(-1px);}
+.cta-secondary{background:var(--white);color:var(--sub);border:1.5px solid var(--border);}
+.cta-secondary:hover{border-color:var(--blue);color:var(--blue);}
+
+.footer-strip{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:40px;border-top:1px solid var(--border);background:rgba(255,255,255,.88);}
+.footer-item{font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.footer-item b{color:var(--teal);font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader-logo"><img src="/static/logo.png" alt="Nextop logo"></div>
+  <div class="loader-bar"></div>
+</div>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+
+<div class="page">
+  <div class="hero">
+    <div class="logo-mark">
+      <img src="/static/logo.png" alt="Nextop logo">
+    </div>
+    <p class="hero-sub">
+      Nextop tracks your journey in real time — announcing each stop as you approach it, in <b>English and Hindi</b>, with live GPS or manual simulation.
+    </p>
+
+    <div class="chips">
+      <span class="chip blue">Live GPS Tracking</span>
+      <span class="chip teal">Bilingual TTS</span>
+      <span class="chip blue">Road-following Routes</span>
+      <span class="chip teal">Offline-capable</span>
+    </div>
+
+    <div class="btn-group">
+      <a href="/tracker" class="cta-btn cta-primary">Board a Route</a>
+    </div>
+  </div>
+</div>
+
+<div class="footer-strip">
+  <span class="footer-item"></span>
+  <span class="footer-item">by <b>Fractal</b></span>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('gone'), 700);
+});
+</script>
+</body>
+</html>
