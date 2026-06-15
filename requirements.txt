@@ -1,6 +1,2 @@
 Flask
 gunicorn
-os
-sqlite3
-uuid
-math
