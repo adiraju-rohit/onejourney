@@ -43,13 +43,23 @@ nav{height:54px;display:flex;align-items:center;justify-content:space-between;pa
 @keyframes pipPulse{0%,100%{opacity:.55}50%{opacity:1}}
 .pip-label{font-size:.55rem;letter-spacing:.12em;color:var(--blue);}
 
-.app{display:grid;grid-template-columns:326px 1fr;height:calc(100vh - 54px - 26px);}
+.app{display:grid;grid-template-columns:326px 1fr;height:calc(100vh - 54px - 26px);transition:grid-template-columns .3s ease;position:relative;}
+.app.sidebar-collapsed{grid-template-columns:0px 1fr;}
 
 .footer-strip{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:40px;border-top:1px solid var(--border);background:rgba(255,255,255,.88);}
 .footer-item{font-size:.5rem;letter-spacing:.18em;color:var(--muted);}
 .footer-item b{color:var(--teal);font-weight:600;}
 
-.sidebar{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;min-width:326px;transition:min-width .3s ease,width .3s ease,opacity .2s ease;}
+.sidebar::-webkit-scrollbar{width:5px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px;}
+.app.sidebar-collapsed .sidebar{min-width:0;width:0;opacity:0;pointer-events:none;}
+
+.sidebar-toggle{position:absolute;top:50%;left:326px;transform:translate(-50%,-50%);z-index:25;width:24px;height:48px;border:1.5px solid var(--border);border-radius:6px;background:var(--white);color:var(--blue);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);font-size:.7rem;transition:left .3s ease,background .2s,color .2s;user-select:none;}
+.sidebar-toggle:hover{background:var(--blue-lt);border-color:var(--blue);}
+.app.sidebar-collapsed .sidebar-toggle{left:0;}
+.sidebar-toggle svg{width:11px;height:11px;transition:transform .3s ease;}
+.app.sidebar-collapsed .sidebar-toggle svg{transform:rotate(180deg);}
 
 .ctrl-block{padding:16px;border-bottom:1px solid var(--border);}
 .field-label{font-size:.5rem;letter-spacing:.26em;color:var(--blue);display:block;margin-bottom:5px;}
@@ -101,7 +111,7 @@ nav{height:54px;display:flex;align-items:center;justify-content:space-between;pa
 .stops-header{padding:8px 16px 6px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
 .stops-header-label{font-size:.47rem;letter-spacing:.28em;color:var(--muted);}
 .stops-count{font-size:.52rem;color:var(--blue);background:var(--blue-lt);padding:2px 7px;border-radius:10px;}
-.stops-scroll{flex:1;overflow-y:auto;}
+.stops-scroll{flex:1;min-height:120px;}
 .stops-scroll::-webkit-scrollbar{width:4px;}
 .stops-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 .stop-row{padding:9px 16px;border-bottom:1px solid rgba(221,227,238,.55);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;}
@@ -184,7 +194,10 @@ nav{height:54px;display:flex;align-items:center;justify-content:space-between;pa
   </div>
 </nav>
 
-<div class="app">
+<div class="app" id="appLayout">
+  <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
+  </button>
   <div class="sidebar">
     <div class="ctrl-block">
       <label class="field-label" for="routeSelect">Route</label>
@@ -788,6 +801,13 @@ function clearMarker() {
 function setPip(state) {
   const p = document.getElementById('pip');
   p.className = 'pip' + (state ? ' '+state : '');
+}
+function toggleSidebar() {
+  const app = document.getElementById('appLayout');
+  app.classList.toggle('sidebar-collapsed');
+  const collapsed = app.classList.contains('sidebar-collapsed');
+  document.getElementById('sidebarToggle').setAttribute('title', collapsed ? 'Show sidebar' : 'Hide sidebar');
+  setTimeout(() => { if (map) map.invalidateSize(); }, 320);
 }
 function setReadout(lat, lng) {
   document.getElementById('rLat').textContent = lat != null ? lat.toFixed(5) : '--';
