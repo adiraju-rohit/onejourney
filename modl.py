@@ -70,7 +70,7 @@ SEED_STOPS = [
      17.4399, 78.4983, 1, 'Main station entrance', 'मुख्य स्टेशन प्रवेश'),
 
     ('route_001', 'Tank Bund', 'टैंक बंड',
-     17.4239, 78.4738, 2, 'Hussain Sagar Lake', 'हुसैन सागर झील'),
+     17.4243, 78.4840, 2, 'Hussain Sagar Lake', 'हुसैन सागर झील'),
 
     ('route_001', 'Afzalgunj Bus Station', 'अफजलगंज बस स्टेशन',
      17.3734, 78.4747, 3, 'Near Osmania Hospital', 'उस्मानिया अस्पताल के पास'),
